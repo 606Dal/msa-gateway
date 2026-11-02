@@ -1,0 +1,33 @@
+server:
+  port: 8000
+
+spring:
+  application:
+    name: Gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+              include-expression: "serviceId != 'GATEWAY' and serviceId != 'EUREKA-SERVER'"
+          routes:
+            - id: member-service
+              uri: lb://MEMBER-SERVICE
+              predicates:
+                - Path=/auth/**,/product/**,/cart/**
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+springdoc:
+  swagger-ui:
+    path: /index.html
+    disable-swagger-default-url: true
+    validator-url: none
